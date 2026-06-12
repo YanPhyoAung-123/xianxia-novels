@@ -1,6 +1,5 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
   description: API specification
@@ -10,13 +9,16 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: translation
+    description: Translation operations
+  - name: glossary
+    description: Glossary management
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +26,258 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /translate:
+    post:
+      operationId: translateText
+      tags: [translation]
+      summary: Translate English text to Burmese
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranslationInput"
+      responses:
+        "200":
+          description: Translation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranslationResult"
+
+  /glossaries:
+    get:
+      operationId: listGlossaries
+      tags: [glossary]
+      summary: List all glossaries
+      responses:
+        "200":
+          description: List of glossaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Glossary"
+    post:
+      operationId: createGlossary
+      tags: [glossary]
+      summary: Create a new glossary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GlossaryInput"
+      responses:
+        "201":
+          description: Created glossary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Glossary"
+
+  /glossaries/{id}:
+    get:
+      operationId: getGlossary
+      tags: [glossary]
+      summary: Get a glossary by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Glossary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Glossary"
+    patch:
+      operationId: updateGlossary
+      tags: [glossary]
+      summary: Update a glossary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GlossaryUpdate"
+      responses:
+        "200":
+          description: Updated glossary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Glossary"
+    delete:
+      operationId: deleteGlossary
+      tags: [glossary]
+      summary: Delete a glossary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /glossaries/{id}/terms:
+    get:
+      operationId: listTerms
+      tags: [glossary]
+      summary: List terms in a glossary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Term"
+    post:
+      operationId: createTerm
+      tags: [glossary]
+      summary: Add a term to a glossary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TermInput"
+      responses:
+        "201":
+          description: Created term
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Term"
+
+  /glossaries/{id}/terms/{termId}:
+    patch:
+      operationId: updateTerm
+      tags: [glossary]
+      summary: Update a term
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: termId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TermUpdate"
+      responses:
+        "200":
+          description: Updated term
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Term"
+    delete:
+      operationId: deleteTerm
+      tags: [glossary]
+      summary: Delete a term
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: termId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /glossaries/{id}/export:
+    get:
+      operationId: exportGlossary
+      tags: [glossary]
+      summary: Export glossary as JSON
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Exported glossary data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlossaryExport"
+
+  /glossaries/import:
+    post:
+      operationId: importGlossary
+      tags: [glossary]
+      summary: Import a glossary from JSON
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GlossaryImport"
+      responses:
+        "201":
+          description: Imported glossary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Glossary"
+
+  /translation-history:
+    get:
+      operationId: listTranslationHistory
+      tags: [translation]
+      summary: Get recent translation history
+      responses:
+        "200":
+          description: Recent translations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TranslationHistory"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +288,154 @@ components:
       required:
         - status
 
+    TranslationInput:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+          description: English text to translate
+        glossaryId:
+          type: ["integer", "null"]
+          description: Optional glossary ID to use for consistent term translation
+        novelTitle:
+          type: ["string", "null"]
+          description: Optional novel title for context
+
+    TranslationResult:
+      type: object
+      required: [translatedText, originalText]
+      properties:
+        translatedText:
+          type: string
+        originalText:
+          type: string
+        appliedTerms:
+          type: array
+          items:
+            type: object
+            properties:
+              english:
+                type: string
+              burmese:
+                type: string
+
+    TranslationHistory:
+      type: object
+      required: [id, originalText, translatedText, createdAt]
+      properties:
+        id:
+          type: integer
+        originalText:
+          type: string
+        translatedText:
+          type: string
+        glossaryId:
+          type: ["integer", "null"]
+        novelTitle:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    Glossary:
+      type: object
+      required: [id, name, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        novelTitle:
+          type: ["string", "null"]
+        termCount:
+          type: integer
+        createdAt:
+          type: string
+
+    GlossaryInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        novelTitle:
+          type: ["string", "null"]
+
+    GlossaryUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        novelTitle:
+          type: ["string", "null"]
+
+    GlossaryExport:
+      type: object
+      required: [glossary, terms]
+      properties:
+        glossary:
+          $ref: "#/components/schemas/Glossary"
+        terms:
+          type: array
+          items:
+            $ref: "#/components/schemas/Term"
+
+    GlossaryImport:
+      type: object
+      required: [glossary, terms]
+      properties:
+        glossary:
+          $ref: "#/components/schemas/GlossaryInput"
+        terms:
+          type: array
+          items:
+            $ref: "#/components/schemas/TermInput"
+
+    Term:
+      type: object
+      required: [id, glossaryId, english, burmese]
+      properties:
+        id:
+          type: integer
+        glossaryId:
+          type: integer
+        english:
+          type: string
+        burmese:
+          type: string
+        category:
+          type: ["string", "null"]
+          description: e.g. character, place, technique, rank
+        notes:
+          type: ["string", "null"]
+
+    TermInput:
+      type: object
+      required: [english, burmese]
+      properties:
+        english:
+          type: string
+        burmese:
+          type: string
+        category:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    TermUpdate:
+      type: object
+      properties:
+        english:
+          type: string
+        burmese:
+          type: string
+        category:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]

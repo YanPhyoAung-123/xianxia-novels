@@ -1,0 +1,14 @@
+{
+  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm run typecheck:libs && pnpm --filter @workspace/api-server run build:vercel && pnpm --filter @workspace/novel-translator run build:vercel",
+  "outputDirectory": "artifacts/novel-translator/dist/public",
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/((?!_vercel|favicon\\.ico).*)", "destination": "/index.html" }
+  ]
+}

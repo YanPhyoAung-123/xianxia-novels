@@ -42,14 +42,22 @@ router.post("/translate", async (req, res) => {
     ? `\nThis is a chapter from the novel: "${novelTitle}".`
     : "";
 
-  const prompt = `You are a professional literary translator specializing in translating WebNovels from English to Burmese (Myanmar language). Your goal is to produce a natural, engaging Burmese translation that readers will enjoy — not a literal word-for-word translation.${contextSection}${glossarySection}
+  const prompt = `သင်သည် WebNovel များကို အင်္ဂလိပ်ဘာသာမှ မြန်မာဘာသာသို့ ဘာသာပြန်ရာတွင် ကျွမ်းကျင်သော ဝတ္ထုဘာသာပြန်ဆရာဖြစ်သည်။${contextSection}${glossarySection}
 
-Translate the following English text to Burmese. Keep the tone, style, and narrative energy of the original. Preserve paragraph breaks.
+အောက်ပါ စည်းမျဉ်းများကို တင်းကြပ်စွာ လိုက်နာပါ။
 
-English text:
+**မဖြစ်မနေ လိုက်နာရမည့် စည်းမျဉ်းများ:**
+1. မူရင်း English စာသားထဲရှိ စကားလုံးတိုင်း၊ ဝါကျတိုင်းကို မကျော်မဖြတ်ပဲ အပြည့်အစုံ ဘာသာပြန်ရမည်။ တစ်လုံးမှ မကျော်ရ။
+2. ဘာသာပြန်ထားသော output တွင် အင်္ဂလိပ်စကားလုံး တစ်လုံးမှ မပါရ — character နာမည်၊ နေရာနာမည်၊ ကျင့်စဉ်အမည်၊ technique အမည် အားလုံးကိုပါ မြန်မာဘာသာဖြင့်သာ ရေးရမည် (Glossary တွင် သတ်မှတ်ထားသည့်အတိုင်း)။
+3. မည်သည့် content ကိုမှ အတိုချုံ့မရ၊ ကျန်ခဲ့မရ — dialog တိုင်း၊ narrative တိုင်း၊ description တိုင်းကို အသေးစိတ် ဘာသာပြန်ရမည်။
+4. မူရင်း paragraph နှင့် dialog structure ကို ထိန်းသိမ်းရမည်။
+5. ဖတ်ရှုသူများ စိတ်ဝင်စားနိုင်ရန် မြန်မာဘာသာ၏ သဘာဝနှင့် ညီညွတ်သော ဆီလျော်မှုရှိသော ဘာသာပြန်ချက်ဖြစ်ရမည်။
+6. Glossary တွင် သတ်မှတ်ထားသော term တိုင်းကို တစ်သမတ်တည်း ထိုနာမည်ဖြင့်သာ ဘာသာပြန်ရမည်။
+
+ဘာသာပြန်ရမည့် English စာသား:
 ${text}
 
-Burmese translation:`;
+မြန်မာဘာသာပြန်ချက် (မြန်မာဘာသာသာ ပါရမည်):`;
 
   const ai = getGeminiClient();
   const response = await ai.models.generateContent({

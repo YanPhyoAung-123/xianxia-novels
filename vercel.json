@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm run typecheck:libs && pnpm --filter @workspace/api-server run build:vercel && pnpm --filter @workspace/novel-translator run build:vercel",
+  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm -w run typecheck:libs && pnpm --filter @workspace/api-server run build:vercel && pnpm --filter @workspace/novel-translator run build:vercel",
   "outputDirectory": "artifacts/novel-translator/dist/public",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "functions": {
